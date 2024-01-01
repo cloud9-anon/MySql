@@ -1,0 +1,181 @@
+CREATE DATABASE lab_exam;
+
+USE lab_exam;
+
+CREATE TABLE dept(deptno int,dname varchar(30), loc varchar(30));
+
+INSERT INTO dept 
+VALUES (10,'ACCOUNTING','NEW YORK'),
+      (20,'RESEARCH', 'DALLAS'),
+      (30,'SALES','CHICAGO'),
+      (40,'OPERATION','BOSTON');
+
+
+CREATE TABLE emp(empno INT, ename VARCHAR(30), job VARCHAR(30), mgr INT,hiredate DATE, sal INT, comm INT, 
+            deptno INT);
+
+
+INSERT INTO emp 
+VALUES 
+(7893,'KING','PRESIDENT',NULL,'1981-11-17',5000,NULL,10),
+(7698,'BLAKE','MANAGER',7839,'1981-05-1',2850,NULL,30),
+(7782,'CLARK','MANAGER',7839,'1981-06-9',2450,NULL,10),
+(7566,'JONES','MANAGER',7839,'1981-4-2',2975,NULL,20),
+(7788,'SCOTT','ANALYST',7566,'1887-07-13',3000,NULL,20),
+(7902,'FORD','ANALYST',7566,'1981-12-3',3000,NULL,20),
+(7369,'SMITH','CLERK',7902,'1980-12-17',800,NULL,20),
+(7499,'ALLEN','SALESMAN',7698,'1981-02-20',1600,300,30),
+(7521,'WARD','SALESMAN',7698,'1984-02-22',1250,500,30),
+(7654,'MARTIN','SALESMAN',7698,'1982-09-28',1250,1400,30),
+(7844,'TURNER','SALESMAN',7698,'1981-09-08',1500,0,30),
+(7876,'ADAMS','CLERK',7788,'1989-07-17',1100,NULL,20),
+(7900,'JAMES','CLERK',7698,'1981-12-03',950,NULL,30),
+(7934,'MILLER','CLERK',7782,'1982-01-23',1300,NULL,10);
+
+
+-- question 1
+SELECT e.ename AS emp_name, e.sal AS salary ,e.hiredate  AS joining_date , d.deptno AS  department_no , d.dname AS department_name 
+FROM emp e INNER JOIN dept d
+WHERE YEAR(e.hiredate) > 1982;
+
+
+SELECT DISTINCT e.empno as id , e.ename AS emp_name , d.dname AS department_name ,e.sal AS salary , e.job AS job
+FROM emp e  JOIN dept d
+WHERE e.job = 'CLERK' OR e.job ='ANALYST' 
+LIMIT 6; 
+
+
+SELECT empno as id , ename AS emp_name , sal AS salary 
+FROM emp
+WHERE ename LIKE '__i%';
+
+
+SELECT *
+FROM emp INNER JOIN dept
+WHERE YEAR(hiredate) > 1981;
+
+
+
+SELECT * 
+FROM emp 
+WHERE sal BETWEEN 1300 AND 5000;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+queston 3
+
+SELECT ename AS emp_name ,job AS manager_name
+FROM emp 
+WHERE empno = mgr AND ename LIKE '__a%';
+
+
+SELECT d.dname , d.deptno, e.ename 
+
+FROM emp e INNER JOIN dept d ON e.deptno = d.deptno;
+ORDER BY e.deptno AND e.ename
+
+
+
+
+SELECT d.dname , COUNT(*)
+GROUP BY e.deptno
+FROM emp e 
+INNER JOIN dept d ON e.deptno = d.deptno
+;
+
+
+
+
+SELECT sal AS salary, ename AS emp_name
+FROM emp 
+ORDER BY sal DESC 
+LIMIT 1;
+
+
+
+
+
+++++++++++++++++++++++
+-- question 3
+
+
+
+DROP FUNCTION IF EXISTS total_salary;
+
+DELIMITER &&
+
+CREATE FUNCTION date_diff_yrs(in_deptno INT)
+
+RETURNS INT
+NOT DETERMINISTIC
+
+BEGIN
+    DECLARE salary_sum INT;
+    
+    SELECT TIMESTAMPDIFF(YEAR,NOW(),in_date) INTO diff_yrs FROM DUAL;
+    RETURN ABS(diff_yrs);
+
+SELECT  SUM(e.sal) INTO total_salary 
+ FROM emp e INNER JOIN dept d
+ ON s.Student_No = m.Student_No 
+ GROUP BY e.deptno
+ SUM(e.sal);
+ RETURN total_salary
+
+END;
+
+&&
+
+DELIMITER ;
+
+
+
+
+
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- question 4
+
+
+
+DROP TRIGGER IF EXISTS EmpSalUpdated;
+DELIMITER $$
+
+CREATE TRIGGER EmpSalUpdated
+BEFORE UPDATE ON emp
+FOR EACH ROW 
+BEGIN 
+    DECLARE new_empno INT;
+    DECLARE oldsal INT;
+    DECLARE newsal INT;
+    SET new_empno = OLD.empno;
+    SET oldsal = OLD.sal;
+    SET newsal = NEW.sal;
+    INSERT INTO salary_history VALUES(new_empno,oldsal,newsal,NOW());
+
+END;
+$$
+
+DELIMITER ;
+
+
+
+
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
+-- question 5
+use simple_db;
+
+db.(my_col).find({like:{$gt:10}});
+
+db.(my_col).find({"comments" : "user=user1"})
+
+
