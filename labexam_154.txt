@@ -104,7 +104,7 @@ DROP FUNCTION IF EXISTS total_salary;
 
 DELIMITER &&
 
-CREATE FUNCTION date_diff_yrs(in_deptno INT)
+CREATE FUNCTION total_salary(in_deptno INT)
 
 RETURNS INT
 NOT DETERMINISTIC
@@ -112,8 +112,7 @@ NOT DETERMINISTIC
 BEGIN
     DECLARE salary_sum INT;
     
-    SELECT TIMESTAMPDIFF(YEAR,NOW(),in_date) INTO diff_yrs FROM DUAL;
-    RETURN ABS(diff_yrs);
+    
 
 SELECT  SUM(e.sal) INTO total_salary 
  FROM emp e INNER JOIN dept d
